@@ -52,12 +52,12 @@ const BootcampSchema = new mongoose.Schema({
         zipcode:String,
         country:String
     },
-    carreers:{
+    careers:{  
         //array of strings
         type:[String],
         required:true, 
         enum:[   //only available values it can have
-            'Web development',
+            'Web Development',
             'Mobile development',
             'UI/UX',
             'Data Science',
