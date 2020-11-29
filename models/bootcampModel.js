@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
-
+import slugify from 'slugify'
+import geocoder from '../utils/geocoder.js'
 const BootcampSchema = new mongoose.Schema({
     name:{
         type:String,
@@ -58,7 +59,7 @@ const BootcampSchema = new mongoose.Schema({
         required:true, 
         enum:[   //only available values it can have
             'Web Development',
-            'Mobile development',
+            'Mobile Development',
             'UI/UX',
             'Data Science',
             'Business',
@@ -88,7 +89,7 @@ const BootcampSchema = new mongoose.Schema({
         default:false
     },
     acceptGi:{
-        type:Boolean,
+        type:Boolean, 
         default:false
     },
     createdAt:{
@@ -96,6 +97,34 @@ const BootcampSchema = new mongoose.Schema({
         default:Date.now
     }
 
+}) 
+
+
+//create bootcamp slug from the name
+
+
+BootcampSchema.pre('save',function(next){
+    this.slug = slugify(this.name,{lower:true})
+    next()
+})
+
+//geocode and creae location field
+
+BootcampSchema.pre('save',async function(next){
+    const loc = await geocoder.geocode(this.address)
+    this.location = {
+        type:'Point',
+        coordinates: [loc[0].longitude,loc[0].latitude],
+        formattedAddress: loc[0].formattedAddress,
+        street:loc[0].streetName,
+        city:loc[0].city,
+        state:loc[0].stateCode,
+        zipcode:loc[0].zipcode,
+        country:loc[0].countryCode,
+    }
+    //Do not save address in the database
+    this.address = undefined;
+    next()
 })
 
 const Bootcamp = mongoose.model('Bootcamp',BootcampSchema)

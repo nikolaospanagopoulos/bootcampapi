@@ -1,17 +1,18 @@
-import express from 'express'
 import dotenv from 'dotenv'
-import bootcampRoutes from './bootcamps/bootcampRoutes.js'
+import express from 'express'
+dotenv.config({path:"./config/config.env"}) 
 import morgan from 'morgan'
+
 import colors from 'colors'
 import connectDB from './config/db.js'
 import errorHandler from './middleware/error.js'
+import bootcampRoutes from './bootcamps/bootcampRoutes.js'
 
-dotenv.config({path:"./config/config.env"})
 
 const app=express()
 
 //body parser
-app.use(express.json())
+app.use(express.json())  
 connectDB()
 //dev logging middleware
 
