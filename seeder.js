@@ -5,6 +5,7 @@ import mongoose from 'mongoose'
 import colors from 'colors'
 import dotenv from 'dotenv'
 import Bootcamp from './models/bootcampModel.js'
+import Course from './models/courseModel.js'
 //load env variables
 dotenv.config({path:'./config/config.env'})
 
@@ -23,12 +24,13 @@ const __dirname = path.dirname(__filename);
 
 
 const bootcamps = JSON.parse(fs.readFileSync(`${__dirname}/_data/bootcamps.json`,'utf-8'))
-
+const courses = JSON.parse(fs.readFileSync(`${__dirname}/_data/courses.json`,'utf-8'))
 //import into db
 
 const importData = async () => {
     try{
         await Bootcamp.create(bootcamps)
+        await Course.create(courses)
         console.log('data imported'.blue.inverse)
     }catch(err){
         console.error(err)
@@ -39,6 +41,7 @@ const importData = async () => {
 const deleteData = async () => {
     try{
         await Bootcamp.deleteMany()
+        await Course.deleteMany()
         console.log('data destroyed'.red.inverse)
     }catch(err){
         console.error(err)

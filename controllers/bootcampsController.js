@@ -2,6 +2,7 @@ import Bootcamp from "../models/bootcampModel.js";
 import ErrorResponse from "../utils/errorResponse.js";
 import asyncHandler from "../middleware/async.js";
 import geocoder from '../utils/geocoder.js'
+import path from 'path'
 //GET ALL BOOTCAMPS
 // GET api/v1/bootcamps
 //public
@@ -24,7 +25,7 @@ const getBootcamps = asyncHandler(async (req, res, next) => {
   querySrt = querySrt.replace(/\b(gt|gte|lt|lte|in)\b/g, match=>`$${match}`)
 
 
-  query = Bootcamp.find(JSON.parse(querySrt))
+  query = Bootcamp.find(JSON.parse(querySrt)).populate('courses')
 
 
    //select fields
@@ -123,14 +124,74 @@ const updateBootcamp = asyncHandler(async (req, res, next) => {
 //DELETE api/v1/bootcamps/
 //private
 const deleteBootcamp = asyncHandler(async (req, res, next) => {
-  let bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
+  let bootcamp = await Bootcamp.findById(req.params.id);
   if (!bootcamp) {
     return next(
       new ErrorResponse(`Bootcamp not found with id of ${req.params.id},404`)
     );
   }
+  bootcamp.remove()
   res.status(200).json({ success: true, data: {} });
 });
+
+
+
+//upload photo for bootcamp
+//put api/v1/bootcamps/:id/photo
+//private
+const bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
+  let bootcamp = await Bootcamp.findById(req.params.id);
+  if (!bootcamp) {
+    return next(
+      new ErrorResponse(`Bootcamp not found with id of ${req.params.id},404`)
+    );
+  }
+  if(!req.files){
+    return next(
+      new ErrorResponse(`Please upload a file`,400)
+    )
+  }
+  const file = req.files.file;
+
+  //make sure the image is a photo
+  if(!file.mimetype.startsWith('image')){
+    return next(
+      new ErrorResponse(`Please upload an image`,400)
+    );
+  }
+
+  //CHECK FILESIZE
+  if(file.size > process.env.MAX_FILE_UPLOAD){
+    return next(
+      new ErrorResponse(`Please upload an image with a size smaller than ${process.env.MAX_FILE_UPLOAD},400`)
+    );
+  }
+
+  //CREATE CUSTOM FILE NAME
+  file.name = `photo_${bootcamp._id}${path.parse(file.name).ext}`
+  console.log(file.name) 
+
+  //UPLOAD FILE
+
+  file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async err => {
+    if(err){
+      console.error(err)
+      return next(
+        new ErrorResponse(`Problem with file upload,500`)
+      );
+    }
+    await Bootcamp.findByIdAndUpdate(req.params.id,{photo: file.name})
+    res.status(200).json({
+      success:true,
+      data:file.name
+    })
+  })
+});
+
+
+
+
+
 
 
 //get bootcamps within a radious
@@ -165,6 +226,7 @@ const getBootcampsInRadious = asyncHandler(async (req, res, next) => {
     createBootcamp,
     updateBootcamp,
     deleteBootcamp,
-    getBootcampsInRadious
+    getBootcampsInRadious,
+    bootcampPhotoUpload
   };
   
