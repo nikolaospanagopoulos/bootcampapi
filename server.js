@@ -12,6 +12,7 @@ import cookieParser from 'cookie-parser'
 import courseRoutes from './routes/coursesRoutes.js'
 import authRoutes from './routes/authRoutes.js'
 import userRoutes from './routes/userRoutes.js'
+import reviewRoutes from './routes/reviewRoutes.js'
 
 const app=express()
 
@@ -45,6 +46,7 @@ app.use('/api/v1/auth',authRoutes)
 app.use('/api/v1/bootcamps',bootcampRoutes)
 app.use('/api/v1/courses',courseRoutes)
 app.use('/api/v1/users',userRoutes)
+app.use('/api/v1/reviews',reviewRoutes)
 app.use(errorHandler)
 const PORT = process.env.PORT || 5000
 

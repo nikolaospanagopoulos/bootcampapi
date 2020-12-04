@@ -1,6 +1,7 @@
 
 import express from 'express'
 import coursesRouter from './coursesRoutes.js'
+import reviewRouter from './reviewRoutes.js'
 const router = express.Router()
 import {getBootcamp, getBootcamps,createBootcamp,updateBootcamp,deleteBootcamp,getBootcampsInRadious,bootcampPhotoUpload} from '../controllers/bootcampsController.js'
 import advancedResults from '../middleware/advancedResults.js'
@@ -9,6 +10,8 @@ import {protect,authorize} from '../middleware/auth.js'
 //route into other resource routes
 
 router.use('/:bootcampId/courses',coursesRouter)
+router.use('/:bootcampId/reviews',reviewRouter)
+
 
 router.route('/radius/:zipcode/:distance').get(getBootcampsInRadious) 
 
