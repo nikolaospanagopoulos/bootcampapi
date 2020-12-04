@@ -11,6 +11,7 @@ import bootcampRoutes from './routes/bootcampRoutes.js'
 import cookieParser from 'cookie-parser'
 import courseRoutes from './routes/coursesRoutes.js'
 import authRoutes from './routes/authRoutes.js'
+import userRoutes from './routes/userRoutes.js'
 
 const app=express()
 
@@ -43,6 +44,7 @@ app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
 app.use('/api/v1/auth',authRoutes)
 app.use('/api/v1/bootcamps',bootcampRoutes)
 app.use('/api/v1/courses',courseRoutes)
+app.use('/api/v1/users',userRoutes)
 app.use(errorHandler)
 const PORT = process.env.PORT || 5000
 
