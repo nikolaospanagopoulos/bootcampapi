@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import mongoose from 'mongoose'
 import colors from 'colors'
 import dotenv from 'dotenv'
+import User from './models/userModel.js'
 import Bootcamp from './models/bootcampModel.js'
 import Course from './models/courseModel.js'
 //load env variables
@@ -25,12 +26,14 @@ const __dirname = path.dirname(__filename);
 
 const bootcamps = JSON.parse(fs.readFileSync(`${__dirname}/_data/bootcamps.json`,'utf-8'))
 const courses = JSON.parse(fs.readFileSync(`${__dirname}/_data/courses.json`,'utf-8'))
+const users = JSON.parse(fs.readFileSync(`${__dirname}/_data/users.json`,'utf-8'))
 //import into db
 
 const importData = async () => {
     try{
         await Bootcamp.create(bootcamps)
         await Course.create(courses)
+        await User.create(users)
         console.log('data imported'.blue.inverse)
     }catch(err){
         console.error(err)
@@ -42,6 +45,7 @@ const deleteData = async () => {
     try{
         await Bootcamp.deleteMany()
         await Course.deleteMany()
+        await User.deleteMany()
         console.log('data destroyed'.red.inverse)
     }catch(err){
         console.error(err)

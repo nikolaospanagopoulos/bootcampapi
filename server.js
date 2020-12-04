@@ -7,15 +7,22 @@ import fileupload from 'express-fileupload'
 import colors from 'colors'
 import connectDB from './config/db.js'
 import errorHandler from './middleware/error.js'
-import bootcampRoutes from './bootcamps/bootcampRoutes.js'
-import courseRoutes from './courses/coursesRoutes.js'
-
+import bootcampRoutes from './routes/bootcampRoutes.js'
+import cookieParser from 'cookie-parser'
+import courseRoutes from './routes/coursesRoutes.js'
+import authRoutes from './routes/authRoutes.js'
 
 const app=express()
 
 //body parser
 app.use(express.json())  
 connectDB()
+
+
+//cookie parser
+app.use(cookieParser())
+
+
 //dev logging middleware
 
 if(process.env.NODE_ENV === 'development'){
@@ -33,7 +40,7 @@ app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
 
 
 
-
+app.use('/api/v1/auth',authRoutes)
 app.use('/api/v1/bootcamps',bootcampRoutes)
 app.use('/api/v1/courses',courseRoutes)
 app.use(errorHandler)
