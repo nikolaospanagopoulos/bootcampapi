@@ -35,6 +35,9 @@ const ReviewSchema = new mongoose.Schema({
 
 })
 
+//prevent more than one review for bootcamp
+ReviewSchema.index({bootcamp:1,user:1},{unique:true})
+
 const User = mongoose.model('Review',ReviewSchema)
 
 export default User
