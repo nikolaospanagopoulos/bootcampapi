@@ -46,7 +46,7 @@ app.use(mongoSanitize())
 
 
 //set security headers
-app.use(helmet())
+app.use(helmet({ contentSecurityPolicy: false }))
 
 
 //prevent xss
@@ -60,13 +60,15 @@ const limiter = rateLimit({
 
 app.use(limiter)
 
+
+app.use(hpp());
 //enable cors
 app.use(cors())
 
 
 //set static folder
 const __dirname = path.resolve()
-app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
+app.use( express.static(path.join(__dirname, 'public')))
 
 
 
