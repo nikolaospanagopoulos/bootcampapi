@@ -24,11 +24,11 @@ const getCourses = asyncHandler(async (req,res,next) => {
     
 })
 
-//get one course
+//get one course 
 //get api/v1/courses/:id
 //get api/v1/bootcamps/:bootcampId/courses 
 
-const getCourse = asyncHandler(async (req,res,next) => {
+const getCourse = asyncHandler(async (req,res,next) => {  
     const course = await Course.findById(req.params.id).populate({
         path:'bootcamp', 
         select:'name description'

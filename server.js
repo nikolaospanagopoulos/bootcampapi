@@ -5,14 +5,20 @@ dotenv.config({path:"./config/config.env"})
 import morgan from 'morgan'
 import fileupload from 'express-fileupload'
 import colors from 'colors'
+import xss from 'xss-clean'
+import mongoSanitize from 'express-mongo-sanitize'
 import connectDB from './config/db.js'
 import errorHandler from './middleware/error.js'
 import bootcampRoutes from './routes/bootcampRoutes.js'
 import cookieParser from 'cookie-parser'
+import helmet from 'helmet'
 import courseRoutes from './routes/coursesRoutes.js'
 import authRoutes from './routes/authRoutes.js'
 import userRoutes from './routes/userRoutes.js'
 import reviewRoutes from './routes/reviewRoutes.js'
+import rateLimit from 'express-rate-limit'
+import hpp from 'hpp'
+import cors from 'cors'
 
 const app=express()
 
@@ -34,6 +40,29 @@ if(process.env.NODE_ENV === 'development'){
 
 
 app.use(fileupload())
+
+//sanitize data
+app.use(mongoSanitize())
+
+
+//set security headers
+app.use(helmet())
+
+
+//prevent xss
+app.use(xss())
+ 
+//rate limiting
+const limiter = rateLimit({
+    windowMs:10*60*1000,
+    max:100
+})
+
+app.use(limiter)
+
+//enable cors
+app.use(cors())
+
 
 //set static folder
 const __dirname = path.resolve()
